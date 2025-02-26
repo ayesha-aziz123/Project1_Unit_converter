@@ -38,27 +38,77 @@ def convert_temperature(value, from_unit, to_unit):
         return (value - 273.15) * 9/5 + 32
     return value
 
+def convert_volume(value, from_unit, to_unit):
+    conversions = {
+        'Liter': 1,
+        'Milliliter': 1000,
+        'Gallon (US)': 0.264172,
+        'Gallon (UK)': 0.219969,
+        'Quart': 1.05669,
+        'Pint': 2.11338,
+        'Fluid Ounce': 33.814
+    }
+    return value * conversions[to_unit] / conversions[from_unit]
+
+def convert_time(value, from_unit, to_unit):
+    conversions = {
+        'Second': 1,
+        'Minute': 1/60,
+        'Hour': 1/3600,
+        'Day': 1/86400
+    }
+    return value * conversions[to_unit] / conversions[from_unit]
+
+def convert_area(value, from_unit, to_unit):
+    conversions = {
+        'Square Meter': 1,
+        'Square Kilometer': 0.000001,
+        'Square Mile': 0.0000003861,
+        'Square Yard': 1.19599,
+        'Square Foot': 10.7639,
+        'Acre': 0.000247105
+    }
+    return value * conversions[to_unit] / conversions[from_unit]
+
 st.set_page_config(page_title="Ultimate Unit Converter", page_icon="🔄", layout="wide")
 
 st.sidebar.title("🔧 Unit Converter")
 st.sidebar.markdown("**Fast & Accurate Unit Conversion in Seconds!**")
 
-unit_type = st.sidebar.radio("Select Conversion Type", ["Length", "Weight", "Temperature"])
+unit_type = st.sidebar.radio("Select Conversion Type", [
+    "📏 Length Converter",
+    "⚖️ Weight Converter",
+    "🌡️ Temperature Converter",
+    "💧 Liquid Converter",
+    "⏳ Time Converter",
+    "📐 Area Converter"
+])
 
-if unit_type == "Length":
+if unit_type == "📏 Length Converter":
     units = ['Meter', 'Kilometer', 'Centimeter', 'Millimeter', 'Inch', 'Foot', 'Yard', 'Mile']
-elif unit_type == "Weight":
+    convert_function = convert_length
+elif unit_type == "⚖️ Weight Converter":
     units = ['Kilogram', 'Gram', 'Milligram', 'Pound', 'Ounce']
-elif unit_type == "Temperature":
+    convert_function = convert_weight
+elif unit_type == "🌡️ Temperature Converter":
     units = ['Celsius', 'Fahrenheit', 'Kelvin']
+    convert_function = convert_temperature
+elif unit_type == "💧 Liquid Converter":
+    units = ['Liter', 'Milliliter', 'Gallon (US)', 'Gallon (UK)', 'Quart', 'Pint', 'Fluid Ounce']
+    convert_function = convert_volume
+elif unit_type == "⏳ Time Converter":
+    units = ['Second', 'Minute', 'Hour', 'Day']
+    convert_function = convert_time
+elif unit_type == "📐 Area Converter":
+    units = ['Square Meter', 'Square Kilometer', 'Square Mile', 'Square Yard', 'Square Foot', 'Acre']
+    convert_function = convert_area
 
-# Stylish Header
 st.markdown("""
     <h1 style='text-align: center; color: #4A90E2; font-size: 42px; font-weight: bold;'>
         🔄 Ultimate Unit Converter
     </h1>
     <h3 style='text-align: center; color: #555; font-size: 20px;'>
-        Convert Length, Weight & Temperature Instantly 🚀
+        Convert Length, Weight, Temperature, Volume, Time & Area Instantly 🚀
     </h3>
     <hr style='border: 2px solid #4A90E2;'>
 """, unsafe_allow_html=True)
@@ -72,13 +122,7 @@ with col3:
     to_unit = st.selectbox("To", units)
     converted_value = ""
     if st.button("Convert Now 🚀"):
-        if unit_type == "Length":
-            converted_value = convert_length(value, from_unit, to_unit)
-        elif unit_type == "Weight":
-            converted_value = convert_weight(value, from_unit, to_unit)
-        elif unit_type == "Temperature":
-            converted_value = convert_temperature(value, from_unit, to_unit)
-
+        converted_value = convert_function(value, from_unit, to_unit)
         st.success(f"🎯 Converted Value: {converted_value:.2f} {to_unit}")
 
 st.markdown("""
